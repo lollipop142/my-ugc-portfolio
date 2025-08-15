@@ -11,94 +11,124 @@
   <style>
     :root{
       /* Palette */
-      --cream:#FAFAED;      /* background */
-      --gold:#E2C893;       /* accent */
-      --navy:#194B6C;       /* primary */
-      --sand:#F2E7D6;       /* alt background */
-      --gold-ink:#8A6A2E;   /* darker gold for tiny text/lines */
+      --cream:#FAFAED;
+      --card:#FFFFFF;
+      --gold:#E2C893;
+      --sand:#F2E7D6;
+      --navy:#194B6C;
+      --gold-ink:#8A6A2E;
 
       /* Base */
       --ink:#1C1B1B;
       --muted:#6F6A68;
-      --card:#FFFFFF;
 
       /* Effects */
-      --line:#E7DDBC;       /* soft border on cream */
+      --line:#E7DDBC;
       --shadow:0 14px 40px rgba(25,75,108,.12);
       --radius:22px;
+
+      --gap:14px;
+      --nav-h:64px;
     }
 
     *{box-sizing:border-box}
     html,body{height:100%}
+    html{scroll-behavior:smooth}
     body{
       margin:0;
       font-family:Poppins,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
       color:var(--ink);
-      /* Creamy white-gold atmosphere */
-      background:
-        radial-gradient(1000px 500px at -10% -10%, rgba(226,200,147,.18) 0%, transparent 60%),
-        radial-gradient(900px 520px at 110% 5%, rgba(242,231,214,.35) 0%, transparent 55%),
-        linear-gradient(180deg, var(--cream) 0%, #FFF7F1 45%, var(--cream) 100%);
       line-height:1.6;
+      background:var(--cream);
+      padding-top:var(--nav-h);
+      -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
     }
+
+    /* Creamy background + soft grain */
+    .bg-ornaments{
+      position:fixed; inset:0; z-index:-2; pointer-events:none;
+      background:
+        radial-gradient(900px 520px at 18% 14%, rgba(226,200,147,.18) 0%, rgba(226,200,147,0) 58%),
+        radial-gradient(720px 420px at 86% 10%, rgba(25,75,108,.06) 0%, rgba(25,75,108,0) 66%),
+        radial-gradient(1000px 560px at 70% 94%, rgba(255,249,236,.70) 0%, rgba(255,249,236,0) 60%),
+        linear-gradient(180deg,#FFFEFB 0%, #FBF8EE 100%);
+    }
+    .grain{
+      position:fixed; inset:-2px; z-index:-1; pointer-events:none; opacity:.13; mix-blend-mode:multiply;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.18'/%3E%3C/svg%3E");
+      background-size:180px 180px;
+    }
+
+    [id]{scroll-margin-top:calc(var(--nav-h) + 10px)}
 
     /* NAV */
     .nav{
-      position:sticky; top:0; z-index:50;
+      position:fixed; top:0; left:0; right:0; z-index:3000; /* <- higher than overlay */
       backdrop-filter:saturate(140%) blur(10px);
-      background:rgba(250,250,237,.78); /* cream glass */
-      border-bottom:1px solid rgba(226,200,147,.28);
+      background:rgba(255,255,250,.78);
+      border-bottom:1px solid rgba(226,200,147,.30);
     }
     .nav__inner{max-width:1200px; margin:0 auto; padding:12px 20px; display:flex; align-items:center; justify-content:space-between}
-    .brand{font-family:"Playfair Display",serif; font-weight:700; letter-spacing:.4px; font-size:20px}
+    .brand{font-family:"Playfair Display",serif; font-weight:700; letter-spacing:.4px; font-size:20px; color:var(--navy)}
+    .menu{display:flex; align-items:center; gap:4px; z-index:3100}
     .menu a{
-      text-decoration:none; color:var(--ink); font-weight:500; margin:0 10px;
-      padding:8px 12px; border-radius:12px; transition:background .15s ease, color .15s ease
+      text-decoration:none; color:#194b6c; font-weight:500; margin:0 6px;
+      padding:8px 12px; border-radius:12px; transition:background .15s ease,color .15s ease
     }
-    .menu a:hover{ background:rgba(226,200,147,.15); color:#1b1a1a }
+    .menu a:hover{background:rgba(226,200,147,.16); color:#1f2b35}
+
+    /* Mobile button */
+    .hamburger{
+      display:none; border:1px solid rgba(25,75,108,.25);
+      background:rgba(255,255,255,.9); color:#1f2b35;
+      width:42px; height:42px; border-radius:12px;
+      align-items:center; justify-content:center; cursor:pointer;
+      box-shadow:0 6px 16px rgba(25,75,108,.18);
+    }
+    .hamburger svg{width:20px; height:20px; display:block}
+
+    /* Mobile dropdown panel */
+    .menu-panel{
+      position:absolute; top:calc(100% + 10px); right:16px; left:16px;
+      background:rgba(255,255,255,.96);
+      border:1px solid rgba(226,200,147,.45);
+      box-shadow:0 18px 42px rgba(25,75,108,.14);
+      border-radius:18px; padding:14px; display:none; z-index:3100;
+      backdrop-filter:saturate(140%) blur(6px);
+    }
+    .menu-panel a{
+      display:block; text-align:center; padding:12px 10px; margin:4px 0;
+      color:#194b6c; font-weight:600; text-decoration:none; border-radius:12px;
+    }
+    .menu-panel a:hover{background:rgba(226,200,147,.14)}
+
+    /* Overlay */
+    .menu-overlay{
+      position:fixed; inset:0; background:rgba(10,14,18,.45);
+      backdrop-filter:blur(2px); display:none; z-index:2000; /* under nav/menu */
+    }
 
     /* HERO */
-    .hero{
-      max-width:1200px; margin:36px auto 24px; padding:0 20px 40px;
-      display:grid; grid-template-columns:1.25fr 1fr; gap:28px; align-items:stretch;
-    }
-    .hero__grid{ position:relative; display:grid; gap:12px; grid-template-columns:repeat(4,1fr); grid-auto-rows:170px; overflow:hidden }
+    .hero{max-width:1200px; margin:36px auto 18px; padding:0 20px 36px; display:grid; grid-template-columns:1.15fr 1fr; gap:24px; align-items:stretch}
+    .hero__grid{position:relative; display:grid; gap:10px; grid-template-columns:repeat(4,1fr); grid-auto-rows:160px; overflow:hidden}
     .tall{grid-row:span 2} .wide{grid-column:span 2}
-
     .hero__img{
-      width:100%; height:100%; object-fit:cover; border-radius:16px;
-      box-shadow:0 0 14px rgba(226,200,147,.35);
-      transition: transform .25s ease, box-shadow .25s ease;
-      position:relative; overflow:hidden;
+      width:100%; height:100%; object-fit:cover; border-radius:18px;
+      border:1px solid rgba(226,200,147,.28);
+      box-shadow:0 10px 26px rgba(25,75,108,.10), 0 0 12px rgba(226,200,147,.22);
+      transition:transform .25s ease, box-shadow .25s ease, filter .25s ease;
+      filter:saturate(1.02) contrast(1.02);
     }
-    .hero__img:hover{ transform:scale(1.05) translateY(-3px); box-shadow:0 18px 42px rgba(226,200,147,.30) }
-    .hero__overlay{ position:absolute; inset:0; border-radius:16px; background:linear-gradient(180deg,rgba(0,0,0,0) 40%, rgba(0,0,0,.18)); pointer-events:none }
-
-    /* Subtle gold glitter */
-    .hero__img::after{
-      content:""; position:absolute; top:-50%; left:-50%;
-      width:200%; height:200%;
-      background:
-        radial-gradient(circle, rgba(255,255,255,0.6) 0%, transparent 40%) 0 0,
-        radial-gradient(circle, rgba(242,231,214,0.5) 0%, transparent 40%) 12px 8px,
-        radial-gradient(circle, rgba(255,255,255,0.4) 0%, transparent 40%) 22px 5px,
-        radial-gradient(circle, rgba(226,200,147,0.25) 0%, transparent 40%) 30px 18px;
-      background-size:60px 60px;
-      animation:glitterMove 6s linear infinite;
-      pointer-events:none;
-    }
-    @keyframes glitterMove {
-      0%   { transform: rotate(0deg) translate(0, 0); }
-      100% { transform: rotate(360deg) translate(0, 0); }
-    }
+    .hero__img:hover{transform:scale(1.03) translateY(-2px); box-shadow:0 16px 38px rgba(25,75,108,.16), 0 0 16px rgba(226,200,147,.3)}
+    .hero__overlay{position:absolute; inset:0; border-radius:16px; background:linear-gradient(180deg,rgba(0,0,0,0) 40%, rgba(0,0,0,.10)); pointer-events:none}
 
     .hero__copy{
-      background:linear-gradient(180deg,#ffffff, var(--sand));
-      border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow);
-      padding:32px; display:flex; flex-direction:column; justify-content:center; gap:14px;
+      background:linear-gradient(180deg, rgba(255,255,255,.98), rgba(251,247,236,.98));
+      border:1px solid rgba(226,200,147,.45); border-radius:var(--radius); box-shadow:var(--shadow);
+      padding:30px; display:flex; flex-direction:column; justify-content:center; gap:14px;
     }
     .eyebrow{ color:var(--gold-ink); font-size:12px; letter-spacing:.22em; text-transform:uppercase }
-    h1{ margin:0; font-family:"Playfair Display",serif; font-size:46px; line-height:1.08; letter-spacing:.3px }
+    h1{ margin:0; font-family:"Playfair Display",serif; font-size:46px; line-height:1.08; letter-spacing:.3px; color:#1f2b35 }
     .lead{ color:#3b3b3b }
 
     /* BUTTONS */
@@ -106,103 +136,183 @@
       display:inline-flex; align-items:center; gap:10px;
       padding:14px 18px; border-radius:14px; border:1px solid #103A54;
       background:var(--navy); color:#fff; text-decoration:none; font-weight:600;
-      box-shadow:0 8px 18px rgba(25,75,108,.25);
-      transition:.2s ease;
+      box-shadow:0 8px 18px rgba(25,75,108,.22); transition:.2s ease;
     }
-    .cta:hover{ transform:translateY(-2px); box-shadow:0 12px 22px rgba(25,75,108,.35) }
-    .cta--ghost{
-      background:linear-gradient(180deg,#fff,var(--sand));
-      color:#2c2a2a; border:1px solid var(--line);
-    }
+    .cta:hover{ transform:translateY(-2px); box-shadow:0 12px 22px rgba(25,75,108,.30) }
+    .cta--ghost{ background:linear-gradient(180deg,#fff,var(--sand)); color:#2c2a2a; border:1px solid var(--line) }
     .cta--ghost:hover{ transform:translateY(-2px); box-shadow:0 8px 18px rgba(226,200,147,.20) }
 
-    /* SECTIONS + CARDS */
-    section{ max-width:1100px; margin:40px auto; padding:0 20px }
-    .section-title{font-family:"Playfair Display",serif; font-size:32px; margin:0 0 18px; letter-spacing:.2px}
-    .cards{ display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:22px }
-    .card{
-      background:var(--card); border-radius:18px; padding:18px;
-      border:1px solid var(--line); box-shadow:var(--shadow);
-      display:flex; flex-direction:column; gap:10px;
-      transition:transform .15s ease, box-shadow .15s ease;
+    /* SECTIONS */
+    section{ max-width:1100px; margin:34px auto; padding:0 20px }
+    .section-title{
+      font-family:"Playfair Display",serif; font-size:32px; margin:0 0 18px; letter-spacing:.2px; color:#1f2b35;
+      position:relative; display:inline-block;
     }
-    .card:hover{ transform:translateY(-2px); box-shadow:0 18px 38px rgba(25,75,108,.18) }
-    .card h3{ margin:2px 0 2px; font-size:18px }
+    .section-title::after{
+      content:""; position:absolute; left:0; right:-6px; bottom:-8px; height:3px;
+      background:linear-gradient(90deg, rgba(226,200,147,.9), rgba(226,200,147,.18));
+      border-radius:999px;
+    }
+
+    .cards{ display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:16px }
+    .card{
+      background:rgba(255,255,255,.98); border-radius:18px; padding:16px;
+      border:1px solid rgba(226,200,147,.38); box-shadow:var(--shadow);
+      display:flex; flex-direction:column; gap:10px; transition:transform .15s ease, box-shadow .15s ease;
+    }
+    .card:hover{ transform:translateY(-2px); box-shadow:0 18px 38px rgba(25,75,108,.16) }
+    .card h3{ margin:2px 0 2px; font-size:18px; color:#192f41 }
     .muted{ color:var(--muted) }
     .card video{ width:100%; border-radius:12px; display:block; background:#000 }
 
-    /* WHY UGC */
-    #why-ugc .wrap{
+    /* ===================== PHOTOS – Pinterest Masonry ===================== */
+    #photos .wrap{
+      position:relative; overflow:hidden;
       background:
-        radial-gradient(700px 320px at 0% 0%, rgba(226,200,147,.12) 0%, transparent 60%),
-        radial-gradient(600px 260px at 100% 10%, rgba(242,231,214,.22) 0%, transparent 55%),
-        linear-gradient(180deg,#FFF8F0,var(--sand));
-      border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow); padding:28px
+        radial-gradient(680px 300px at 0% 0%, rgba(226,200,147,.12) 0%, transparent 60%),
+        radial-gradient(560px 240px at 100% 20%, rgba(25,75,108,.08) 0%, transparent 55%),
+        linear-gradient(180deg, rgba(255,253,248,.96), rgba(250,246,236,.96));
+      border:1px solid rgba(226,200,147,.45);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:18px;
     }
-    #why-ugc .stats{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:18px; margin-top:14px}
-    #why-ugc .stat{background:#fff; border:1px solid var(--line); border-radius:16px; padding:18px}
-    #why-ugc .stat strong{color:var(--navy)}
-    #why-ugc .note{background:#fff; border:1px dashed #E9DFC7; border-radius:16px; padding:14px; margin-top:18px}
 
-    /* FOOTER / SOCIALS */
+    /* Watermark */
+    #photos .wm{ position:absolute; inset:0; z-index:0; pointer-events:none; user-select:none; }
+    #photos .wm span{
+      position:absolute;
+      font-family:"Playfair Display",serif;
+      font-weight:700;
+      letter-spacing:.035em;
+      font-size:clamp(84px, 20vw, 240px);
+      color:var(--gold-ink);
+      opacity:.08;
+      mix-blend-mode:multiply;
+      -webkit-text-stroke:1px rgba(255,255,255,.35);
+      text-shadow:0 2px 10px rgba(226,200,147,.15);
+      white-space:nowrap;
+    }
+    #photos .wm-fatima{ top:10%; left:4%; }
+    #photos .wm-rose{ bottom:16%; right:18%; }
+
+    /* Masonry columns */
+    .masonry{
+      column-count:4; column-gap:var(--gap);
+      position:relative; z-index:1;   /* above watermark */
+    }
+    .pin{
+      break-inside:avoid; margin:0 0 var(--gap);
+      position:relative; border-radius:18px; overflow:hidden; cursor:zoom-in;
+      background:linear-gradient(180deg,#fff,var(--sand));
+      border:1px solid rgba(226,200,147,.45);
+      box-shadow:0 10px 26px rgba(25,75,108,.10);
+      transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease, filter .18s ease;
+      filter:saturate(1.02);
+    }
+    .pin:hover{ transform:translateY(-2px); box-shadow:0 16px 36px rgba(25,75,108,.16); border-color:rgba(226,200,147,.68) }
+    .pin img{ width:100%; height:auto; display:block }
+
+    .pin .badge{
+      position:absolute; top:10px; right:10px; z-index:2;
+      background:rgba(25,75,108,.95); color:#fff; border:1px solid rgba(226,200,147,.55);
+      padding:6px 10px; border-radius:999px; font-size:12px; display:inline-flex; align-items:center; gap:6px;
+      box-shadow:0 6px 16px rgba(25,75,108,.25);
+      opacity:0; transform:translateY(-6px); transition:.18s ease;
+    }
+    .pin:hover .badge{opacity:1; transform:translateY(0)}
+    .pin .badge svg{width:14px; height:14px; fill:#fff; display:block}
+
+    /* LIGHTBOX */
+    .lb{ position:fixed; inset:0; display:none; align-items:center; justify-content:center; padding:24px; background:rgba(0,0,0,.55); backdrop-filter:blur(2px); z-index:2000 }
+    .lb.open{ display:flex }
+    .lb__img{ max-width:min(92vw,1100px); max-height:86vh; border-radius:16px; display:block; box-shadow:0 24px 60px rgba(0,0,0,.32); background:#fff; border:1px solid rgba(231,221,188,.6) }
+    .lb__close{ position:fixed; top:14px; right:14px; background:rgba(255,255,255,.94); border:1px solid rgba(226,200,147,.7); border-radius:999px; padding:8px 12px; font-weight:600; color:#333; cursor:pointer; box-shadow:var(--shadow) }
+
+    /* FOOTER */
     .footer{padding:40px 20px; text-align:center; color:#756f6d}
     .socials{ margin-top:12px; display:flex; gap:14px; justify-content:center; align-items:center }
-    .socials a{
-      width:34px; height:34px; display:inline-flex; align-items:center; justify-content:center;
-      border-radius:50%; background:#1c1b1b; color:#fff; text-decoration:none;
-      transition:transform .12s ease, opacity .12s ease;
-    }
-    .socials a:hover{ transform:translateY(-2px); opacity:.9 }
-    .socials svg{ width:18px; height:18px; fill:#fff; display:block }
+    .socials a{ width:34px; height:34px; display:inline-flex; align-items:center; justify-content:center; border-radius:50%; background:#1c1b1b; color:#fff; text-decoration:none; transition:transform .12s ease, opacity .12s ease}
+    .socials a:hover{ transform:translateY(-2px); opacity:.9 } .socials svg{ width:18px; height:18px; fill:#fff; display:block }
 
     /* RESPONSIVE */
+    @media (max-width:1100px){ .masonry{ column-count:3 } }
     @media (max-width:980px){
       .hero{ grid-template-columns:1fr }
       .hero__grid{ grid-auto-rows:140px }
       h1{ font-size:38px }
-      #why-ugc .stats{grid-template-columns:1fr}
+    }
+    @media (max-width:760px){
+      .masonry{ column-count:2 }
+      .menu{ display:none }              /* hide desktop links */
+      .hamburger{ display:inline-flex }  /* show hamburger */
+      .menu-panel{ display:block; transform:translateY(-6px); opacity:0; pointer-events:none; }
+      .menu-open .menu-panel{ transform:translateY(0); opacity:1; pointer-events:auto; }
+      .menu-open .menu-overlay{ display:block; }
     }
     @media (max-width:640px){
-      .menu{ display:none }
+      .brand{ font-size:18px }
       .hero__grid{ grid-auto-rows:120px }
       h1{ font-size:32px }
+      :root{ --nav-h:60px }
     }
   </style>
 </head>
 <body>
 
+  <!-- decorative background -->
+  <div class="bg-ornaments" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
+
   <!-- NAV -->
   <nav class="nav" aria-label="Primary">
     <div class="nav__inner">
-      <div class="brand">Fatima Keita</div>
-      <div class="menu">
-        <a href="#about">About</a>
-        <a href="#videos">Videos</a>
-      
-        <a href="#contact">Contact</a>
+      <div class="brand">Fatima Rose</div>
+
+      <!-- Desktop menu -->
+      <div class="menu" role="menubar">
+        <a href="#about" role="menuitem">About</a>
+        <a href="#photos" role="menuitem">Photos</a>
+        <a href="#videos" role="menuitem">Videos</a>
+        <a href="#testimonials" role="menuitem">Testimonials</a>
+        <a href="#contact" role="menuitem">Contact</a>
       </div>
+
+      <!-- Mobile hamburger -->
+      <button class="hamburger" id="menuBtn" aria-label="Open menu" aria-controls="mobileMenu" aria-expanded="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+      </button>
+    </div>
+
+    <!-- Mobile dropdown panel (stays under the nav) -->
+    <div class="menu-panel" id="mobileMenu" role="menu">
+      <a href="#about" role="menuitem">About</a>
+      <a href="#photos" role="menuitem">Photos</a>
+      <a href="#videos" role="menuitem">Videos</a>
+      <a href="#testimonials" role="menuitem">Testimonials</a>
+      <a href="#contact" role="menuitem">Contact</a>
     </div>
   </nav>
+
+  <!-- Backdrop overlay -->
+  <div class="menu-overlay" id="menuOverlay" aria-hidden="true"></div>
 
   <!-- HERO -->
   <header class="hero" role="banner">
     <div class="hero__grid" aria-hidden="true">
-      <img class="hero__img tall"  src="assets/1.jpg" alt="">
-      <img class="hero__img"       src="assets/4.jpg" alt="">
-      <img class="hero__img wide"  src="assets/3.jpg" alt="">
-      <img class="hero__img tall"  src="assets/2.jpg" alt="">
-      <img class="hero__img"       src="assets/6.jpg" alt="">
-      <img class="hero__img"       src="assets/5.jpg" alt="">
+      <img class="hero__img tall"  src="assets/1.jpg" alt="Lifestyle portrait with product">
+      <img class="hero__img"       src="assets/4.jpg" alt="Soft light product detail">
+      <img class="hero__img wide"  src="assets/3.jpg" alt="Editorial scene with skincare">
+      <img class="hero__img tall"  src="assets/2.jpg" alt="Calm morning routine">
+      <img class="hero__img"       src="assets/6.jpg" alt="Flat lay textures and props">
+      <img class="hero__img"       src="assets/5.jpg" alt="Hands with serum bottle">
       <span class="hero__overlay"></span>
     </div>
 
     <div class="hero__copy">
       <span class="eyebrow">UGC • Wellness • Lifestyle • Self-Care</span>
       <h1>Portfolio</h1>
-      <p class="lead">
-        I craft soft-yet-strong content that turns products into emotional brand stories —
-        designed for engagement, trust, and conversions.
-      </p>
+      <p class="lead">I craft soft-yet-strong content that turns products into emotional brand stories — designed for engagement, trust, and conversions.</p>
       <div style="display:flex; gap:10px; flex-wrap:wrap">
         <a class="cta" href="#videos">See Work →</a>
         <a class="cta cta--ghost" href="#contact">Work With Me</a>
@@ -210,7 +320,7 @@
     </div>
   </header>
 
-  <!-- ABOUT / VALUE -->
+  <!-- ABOUT -->
   <section id="about">
     <div class="cards">
       <div class="card">
@@ -225,42 +335,100 @@
     </div>
   </section>
 
-  
+  <!-- PHOTOS -->
+  <section id="photos">
+    <h2 class="section-title">Photos</h2>
+    <div class="wrap">
+      <!-- watermark -->
+      <span class="wm" aria-hidden="true">
+        <span class="wm-fatima">Fatima</span>
+        <span class="wm-rose">Rose</span>
+      </span>
 
-  <!-- VIDEO SHOWCASE -->
-  <section id="videos">
-    <h2 class="section-title">Video Examples</h2>
-    <div class="cards">
-      <div class="card">
-        <video controls poster="assets/video1-thumb.jpg">
-          <source src="assets/video1.mp4" type="video/mp4">
-          Your browser does not support the video tag.
-        </video>
-        <h3>Skincare Routine Demo</h3>
-        <p class="muted">Soft, natural lighting with close-ups on texture and glow.</p>
-      </div>
+      <!-- Masonry pins -->
+      <div class="masonry">
+        <figure class="pin" data-full="assets/shot1.jpg">
+          <span class="badge" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M12 21s-7.2-4.3-9.5-8.2C.6 9.7 2.2 6 5.8 6c2 0 3.3 1.1 4.2 2.4C11 7.1 12.3 6 14.3 6c3.6 0 5.2 3.7 3.3 6.8C19.2 16.7 12 21 12 21z"/></svg>
+            Save
+          </span>
+          <img src="assets/shot1.jpg" alt="Golden hour portrait holding product">
+        </figure>
 
-      <div class="card">
-        <video controls poster="assets/video2-thumbnail.jpg">
-          <source src="assets/video2.mp4" type="video/mp4">
-          Your browser does not support the video tag.
-        </video>
-        <h3>Morning Ritual</h3>
-        <p class="muted">Calm and cozy aesthetic integrating product naturally.</p>
-      </div>
-
-      <div class="card">
-        <video controls poster="assets/video3-thumbnail.jpg">
-          <source src="assets/video3.mp4" type="video/mp4">
-          Your browser does not support the video tag.
-        </video>
-        <h3>Before & After Glow</h3>
-        <p class="muted">From first look to luminous payoff.</p>
+        <figure class="pin" data-full="assets/shot2.jpg"><span class="badge" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 21s-7.2-4.3-9.5-8.2C.6 9.7 2.2 6 5.8 6c2 0 3.3 1.1 4.2 2.4C11 7.1 12.3 6 14.3 6c3.6 0 5.2 3.7 3.3 6.8C19.2 16.7 12 21 12 21z"/></svg>Save</span><img src="assets/shot2.jpg" alt="Serum texture on hands"></figure>
+        <figure class="pin" data-full="assets/shot3.jpg"><span class="badge" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 21s-7.2-4.3-9.5-8.2C.6 9.7 2.2 6 5.8 6c2 0 3.3 1.1 4.2 2.4C11 7.1 12.3 6 14.3 6c3.6 0 5.2 3.7 3.3 6.8C19.2 16.7 12 21 12 21z"/></svg>Save</span><img src="assets/shot3.jpg" alt="Ultra-tall editorial with bottle"></figure>
+        <figure class="pin" data-full="assets/shot4.jpg"><span class="badge" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 21s-7.2-4.3-9.5-8.2C.6 9.7 2.2 6 5.8 6c2 0 3.3 1.1 4.2 2.4C11 7.1 12.3 6 14.3 6c3.6 0 5.2 3.7 3.3 6.8C19.2 16.7 12 21 12 21z"/></svg>Save</span><img src="assets/shot4.jpg" alt="Mirror portrait with product"></figure>
+        <figure class="pin" data-full="assets/shot5.jpg"><span class="badge" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 21s-7.2-4.3-9.5-8.2C.6 9.7 2.2 6 5.8 6c2 0 3.3 1.1 4.2 2.4C11 7.1 12.3 6 14.3 6c3.6 0 5.2 3.7 3.3 6.8C19.2 16.7 12 21 12 21z"/></svg>Save</span><img src="assets/shot5.jpg" alt="Outdoor detail with tote and bottle"></figure>
+        <figure class="pin" data-full="assets/shot6.jpg"><span class="badge" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 21s-7.2-4.3-9.5-8.2C.6 9.7 2.2 6 5.8 6c2 0 3.3 1.1 4.2 2.4C11 7.1 12.3 6 14.3 6c3.6 0 5.2 3.7 3.3 6.8C19.2 16.7 12 21 12 21z"/></svg>Save</span><img src="assets/shot6.jpg" alt="Routine: applying cream"></figure>
+        <figure class="pin" data-full="assets/shot7.jpg"><span class="badge" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 21s-7.2-4.3-9.5-8.2C.6 9.7 2.2 6 5.8 6c2 0 3.3 1.1 4.2 2.4C11 7.1 12.3 6 14.3 6c3.6 0 5.2 3.7 3.3 6.8C19.2 16.7 12 21 12 21z"/></svg>Save</span><img src="assets/shot7.jpg" alt="Editorial portrait with product"></figure>
+        <figure class="pin" data-full="assets/shot8.jpg"><span class="badge" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 21s-7.2-4.3-9.5-8.2C.6 9.7 2.2 6 5.8 6c2 0 3.3 1.1 4.2 2.4C11 7.1 12.3 6 14.3 6c3.6 0 5.2 3.7 3.3 6.8C19.2 16.7 12 21 12 21z"/></svg>Save</span><img src="assets/shot8.jpg" alt="Phone-tall packaging vignette"></figure>
+        <figure class="pin" data-full="assets/shot9.jpg"><span class="badge" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 21s-7.2-4.3-9.5-8.2C.6 9.7 2.2 6 5.8 6c2 0 3.3 1.1 4.2 2.4C11 7.1 12.3 6 14.3 6c3.6 0 5.2 3.7 3.3 6.8C19.2 16.7 12 21 12 21z"/></svg>Save</span><img src="assets/shot9.jpg" alt="BTS scene with diffuser"></figure>
+        <figure class="pin" data-full="assets/shot10.jpg"><span class="badge" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 21s-7.2-4.3-9.5-8.2C.6 9.7 2.2 6 5.8 6c2 0 3.3 1.1 4.2 2.4C11 7.1 12.3 6 14.3 6c3.6 0 5.2 3.7 3.3 6.8C19.2 16.7 12 21 12 21z"/></svg>Save</span><img src="assets/shot10.jpg" alt="Ingredients still-life with dropper"></figure>
+        <figure class="pin" data-full="assets/shot11.jpg"><span class="badge" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 21s-7.2-4.3-9.5-8.2C.6 9.7 2.2 6 5.8 6c2 0 3.3 1.1 4.2 2.4C11 7.1 12.3 6 14.3 6c3.6 0 5.2 3.7 3.3 6.8C19.2 16.7 12 21 12 21z"/></svg>Save</span><img src="assets/shot11.jpg" alt="Detail portrait with glossed lips and product"></figure>
+        <figure class="pin" data-full="assets/shot12.jpg"><span class="badge" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 21s-7.2-4.3-9.5-8.2C.6 9.7 2.2 6 5.8 6c2 0 3.3 1.1 4.2 2.4C11 7.1 12.3 6 14.3 6c3.6 0 5.2 3.7 3.3 6.8C19.2 16.7 12 21 12 21z"/></svg>Save</span><img src="assets/shot12.jpg" alt="Before/after bottles on marble"></figure>
       </div>
     </div>
   </section>
 
+  <!-- VIDEOS -->
+  <section id="videos">
+    <h2 class="section-title">Video Examples</h2>
+    <div class="cards">
+      <div class="card">
+        <video controls preload="metadata" playsinline poster="assets/video1-thumb.jpg">
+          <source src="assets/video1.mp4" type="video/mp4">
+        </video>
+        <h3>Skincare Routine Demo</h3>
+        <p class="muted">Natural-light routine with a jelly-like glow—hydrated, bouncy skin on camera.</p>
+      </div>
 
+      <div class="card">
+        <video controls preload="metadata" playsinline poster="assets/video2-thumbnail.jpg">
+          <source src="assets/video2.mp4" type="video/mp4">
+        </video>
+        <h3>Make Up Routine</h3>
+        <p class="muted">Primer-to-setting-spray routine for a fresh, long-wear look—natural and cozy on camera.</p>
+      </div>
+
+      <div class="card">
+        <video controls preload="metadata" playsinline poster="assets/video3-thumbnail.jpg">
+          <source src="assets/video3.mp4" type="video/mp4">
+        </video>
+        <h3>Makeup Melt Balm</h3>
+        <p class="muted">Balm-to-oil cleanse that dissolves makeup/SPF, cushions sensitive skin, and rinses clean.</p>
+      </div>
+
+      <div class="card">
+        <video controls preload="metadata" playsinline poster="assets/video4-thumb.jpg">
+          <source src="assets/video4.mp4" type="video/mp4">
+        </video>
+        <h3>Skin Tint + Concealer Demo</h3>
+        <p class="muted">Skin-first tint with spot conceal—on-camera glow, fresh natural look, tone stays even and real.</p>
+      </div>
+
+      <div class="card">
+        <video controls preload="metadata" playsinline poster="assets/video5-thumb.jpg">
+          <source src="assets/video5.mp4" type="video/mp4">
+        </video>
+        <h3>Lip Oil Demo</h3>
+        <p class="muted">Tinted lip oil—juicy hydration, soft plump, and glassy pigment that pops on camera.</p>
+      </div>
+
+      <div class="card">
+        <video controls preload="metadata" playsinline poster="assets/video6-thumb.jpg">
+          <source src="assets/video6.mp4" type="video/mp4">
+        </video>
+        <h3>Everyday Makeup, Naturally</h3>
+        <p class="muted">Seamless product moment inside a real routine—skin-like glow, fresh tone, and effortless wear on camera.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS (skeleton ready for your content) -->
+  <section id="testimonials">
+    <h2 class="section-title">Testimonials</h2>
+    <!-- Add your testimonial cards here when ready -->
+  </section>
 
   <!-- CONTACT -->
   <section id="contact">
@@ -299,12 +467,66 @@
     </div>
   </footer>
 
+  <!-- LIGHTBOX -->
+  <div class="lb" id="lb" aria-hidden="true">
+    <img class="lb__img" id="lbImg" alt="">
+    <button class="lb__close" type="button" id="lbClose" aria-label="Close">×</button>
+  </div>
+
   <script>
+    // dynamic year + lazy alt
     document.getElementById('y').textContent = new Date().getFullYear();
-    document.querySelectorAll('.hero__img').forEach(img=>{
+    document.querySelectorAll('img').forEach(img=>{
       img.loading='lazy';
-      if(!img.alt) img.alt='Lifestyle collage image';
+      if(!img.alt) img.alt='Lifestyle image';
     });
+
+    // ----- Mobile menu toggle -----
+    const body = document.body;
+    const btn = document.getElementById('menuBtn');
+    const panel = document.getElementById('mobileMenu');
+    const overlay = document.getElementById('menuOverlay');
+
+    function closeMenu(){
+      body.classList.remove('menu-open');
+      btn.setAttribute('aria-expanded','false');
+      btn.setAttribute('aria-label','Open menu');
+    }
+    function openMenu(){
+      body.classList.add('menu-open');
+      btn.setAttribute('aria-expanded','true');
+      btn.setAttribute('aria-label','Close menu');
+    }
+    btn.addEventListener('click', ()=>{
+      body.classList.contains('menu-open') ? closeMenu() : openMenu();
+    });
+    overlay.addEventListener('click', closeMenu);
+    window.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeMenu(); });
+    // Close after selecting a link
+    panel.querySelectorAll('a').forEach(a=>a.addEventListener('click', closeMenu));
+
+    // ----- Simple lightbox for photos -----
+    const lb = document.getElementById('lb');
+    const lbImg = document.getElementById('lbImg');
+    const lbClose = document.getElementById('lbClose');
+
+    document.querySelectorAll('#photos .pin').forEach(pin=>{
+      pin.addEventListener('click', ()=>{
+        const full = pin.getAttribute('data-full') || pin.querySelector('img').src;
+        lbImg.src = full;
+        lb.classList.add('open');
+        lb.setAttribute('aria-hidden','false');
+      });
+    });
+
+    function closeLB(){
+      lb.classList.remove('open');
+      lb.setAttribute('aria-hidden','true');
+      lbImg.src = '';
+    }
+    lbClose.addEventListener('click', closeLB);
+    lb.addEventListener('click', (e)=>{ if(e.target === lb) closeLB(); });
+    window.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') closeLB(); });
   </script>
 </body>
 </html>
